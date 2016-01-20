@@ -29,18 +29,17 @@ module Clandestined
     end
 
     def find_node(key)
-      high_score = -1
-      winner = nil
-      nodes.each do |node|
-        score = hash_function.call("#{node}-#{key}")
-        if score > high_score
-          high_score, winner = score, node
-        elsif score == high_score
-          high_score, winner = score, [node.to_s, winner.to_s].max
-        end
-      end
-      winner
+      find_nodes(key).first
     end
 
+    def find_nodes(key, num_nodes=1)
+      results = []
+      nodes.each do |node|
+        score = hash_function.call("#{node}-#{key}")
+        results << [score, node]
+      end
+      # Sort descending by score, use the node id converted to string as tiebraker
+      results.sort{|a,b| [b[0], b[1].to_s] <=> [a[0], a[1].to_s]}.take(num_nodes).map(&:last)
+    end
   end
 end
