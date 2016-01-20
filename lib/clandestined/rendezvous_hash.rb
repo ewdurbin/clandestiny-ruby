@@ -35,8 +35,7 @@ module Clandestined
     def find_nodes(key, num_nodes=1)
       results = []
       nodes.each do |node|
-        score = hash_function.call("#{node}-#{key}")
-        results << [score, node]
+        results << [hash_function.call("#{node}-#{key}"), node]
       end
       # Sort descending by score, use the node id converted to string as tiebraker
       results.sort{|a,b| [b[0], b[1].to_s] <=> [a[0], a[1].to_s]}.take(num_nodes).map(&:last)
