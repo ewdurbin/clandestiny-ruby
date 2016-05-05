@@ -7,7 +7,7 @@ require 'clandestined/rendezvous_hash'
 include Clandestined
 
 
-class RendezvousHashTestCase < Test::Unit::TestCase
+class RendezvousHashMurMurTestCase < Test::Unit::TestCase
 
   def test_init_no_options
     rendezvous = RendezvousHash.new()
@@ -82,6 +82,85 @@ class RendezvousHashTestCase < Test::Unit::TestCase
     assert_equal('1', rendezvous.find_node('mykey'))
     assert_equal('2', rendezvous.find_node('wat'))
     assert_equal('3', rendezvous.find_node('lol'))
+  end
+
+end
+
+class RendezvousHashSipHashTestCase < Test::Unit::TestCase
+
+  def test_init_no_options
+    rendezvous = RendezvousHash.new(nil, 0, :siphash)
+    assert_equal(0, rendezvous.nodes.length)
+    assert_equal(12268983219697955183, rendezvous.hash_function.call('6666'))
+  end
+
+  def test_init
+    nodes = ['0', '1', '2']
+    rendezvous = RendezvousHash.new(nodes, 0, :siphash)
+    assert_equal(3, rendezvous.nodes.length)
+    assert_equal(12268983219697955183, rendezvous.hash_function.call('6666'))
+  end
+
+  def test_seed
+    rendezvous = RendezvousHash.new(nil, "8ed18c1098ec29a2", :siphash)
+    assert_equal("8ed18c1098ec29a2", rendezvous.seed)
+    assert_equal(9634808532907877200, rendezvous.hash_function.call('6666'))
+  end
+
+  def test_add_node
+    rendezvous = RendezvousHash.new(nil, 0, :siphash)
+    rendezvous.add_node('1')
+    assert_equal(1, rendezvous.nodes.length)
+    rendezvous.add_node('1')
+    assert_equal(1, rendezvous.nodes.length)
+    rendezvous.add_node('2')
+    assert_equal(2, rendezvous.nodes.length)
+    rendezvous.add_node('1')
+    assert_equal(2, rendezvous.nodes.length)
+  end
+
+  def test_remove_node
+    nodes = ['0', '1', '2']
+    rendezvous = RendezvousHash.new(nodes, 0, :siphash)
+    rendezvous.remove_node('2')
+    assert_equal(2, rendezvous.nodes.length)
+    assert_raises(ArgumentError) { rendezvous.remove_node(2, rendezvous.nodes.length) }
+    assert_equal(2, rendezvous.nodes.length)
+    rendezvous.remove_node('1')
+    assert_equal(1, rendezvous.nodes.length)
+    rendezvous.remove_node('0')
+    assert_equal(0, rendezvous.nodes.length)
+  end
+
+  def test_find_node
+    nodes = ['0', '1', '2']
+    rendezvous = RendezvousHash.new(nodes, 0, :siphash)
+    assert_equal('1', rendezvous.find_node('ok'))
+    assert_equal('0', rendezvous.find_node('mykey'))
+    assert_equal('0', rendezvous.find_node('wat'))
+  end
+
+  def test_find_node_after_removal
+    nodes = ['0', '1', '2']
+    rendezvous = RendezvousHash.new(nodes, 0, :siphash)
+    rendezvous.remove_node('1')
+    assert_equal('2', rendezvous.find_node('ok'))
+    assert_equal('0', rendezvous.find_node('mykey'))
+    assert_equal('0', rendezvous.find_node('wat'))
+  end
+
+  def test_find_node_after_addition
+    nodes = ['0', '1', '2']
+    rendezvous = RendezvousHash.new(nodes, 0, :siphash)
+    assert_equal('1', rendezvous.find_node('ok'))
+    assert_equal('0', rendezvous.find_node('mykey'))
+    assert_equal('0', rendezvous.find_node('wat'))
+    assert_equal('2', rendezvous.find_node('lol'))
+    rendezvous.add_node('3')
+    assert_equal('1', rendezvous.find_node('ok'))
+    assert_equal('3', rendezvous.find_node('mykey'))
+    assert_equal('3', rendezvous.find_node('wat'))
+    assert_equal('2', rendezvous.find_node('lol'))
   end
 
 end
