@@ -1,6 +1,5 @@
 require 'murmur3'
 require 'digest/siphash'
-require 'securerandom'
 require 'string'
 
 module Clandestined
