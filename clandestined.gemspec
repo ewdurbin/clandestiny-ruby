@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib', 'ext']
   s.extensions = ['ext/murmur3_native/extconf.rb']
 
-  %w{securerandom digest-siphash}.each { |gem| s.add_dependency gem }
+  %w{digest-siphash}.each { |gem| s.add_dependency gem }
 
   if RUBY_VERSION < "1.9"
     s.add_development_dependency 'rake', '0.8.7'
