@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'clandestined'
-  s.version = '1.0.0'
+  s.version = '1.0.1'
   s.licenses = ['MIT']
   s.date = Time.now.strftime('%Y-%m-%d')
   s.summary = 'rendezvous hashing implementation based on murmur3 hash'
