@@ -1,6 +1,6 @@
 require 'murmur3'
-require 'digest/siphash'
 require 'string'
+require 'digest/siphash'
 
 module Clandestined
   class RendezvousHash
