@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'clandestined'
-  s.version = '1.0.0'
+  s.version = '1.0.1'
   s.licenses = ['MIT']
   s.date = Time.now.strftime('%Y-%m-%d')
   s.summary = 'rendezvous hashing implementation based on murmur3 hash'
@@ -12,6 +12,8 @@ Gem::Specification.new do |s|
   s.test_files = `git ls-files -- test/*`.split("\n")
   s.require_paths = ['lib', 'ext']
   s.extensions = ['ext/murmur3_native/extconf.rb']
+
+  %w{digest-siphash}.each { |gem| s.add_dependency gem }
 
   if RUBY_VERSION < "1.9"
     s.add_development_dependency 'rake', '0.8.7'
